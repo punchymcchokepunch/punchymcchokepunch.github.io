@@ -1,155 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Malware Mixers</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0f0f1a;
-      --fg: #e0e0e0;
-      --accent: #3afddf;
-      --accent-2: #ff25d9;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; line-height: 1.6; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
-    nav .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
-    nav ul { list-style: none; display: flex; gap: 1.5rem; }
-    nav a { color: var(--fg); text-decoration: none; font-weight: 600; }
-    .hero { text-align: center; padding: 6rem 2rem; }
-    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
-    .hero p { font-size: 1.25rem; margin-bottom: 2rem; color: #bbb; }
-    .btn { padding: 0.75rem 1.5rem; background: var(--accent); color: var(--bg); font-weight: 600; border: none; border-radius: 4px; cursor: pointer; }
-    .section { padding: 4rem 2rem; }
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
-    .feature { background: #1a1a2e; border-radius: 8px; padding: 2rem; }
-    .feature h3 { margin-bottom: 0.5rem; color: var(--accent-2); }
-    #graphContainer { position: relative; width: 100%; height: 400px; }
-    .footer { text-align: center; padding: 2rem; border-top: 1px solid #222; }
-    a.cta-link { color: var(--accent); text-decoration: underline; }
+    /* System fonts */
+    body, button { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; height: 100vh; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+    /* Parallax background layer */
+    .parallax { position: fixed; width: 100%; height: 100%; top: 0; left: 0; overflow: hidden; z-index: 1; }
+    .layer { position: absolute; width: 120%; height: 120%; top: -10%; left: -10%; background-size: cover; background-position: center; will-change: transform; }
+    .layer.bg1 { background: url('dark_surreal_sky.png') no-repeat center / cover; filter: brightness(0.7) blur(2px); }
+    nav { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; padding: 2rem 4rem; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); z-index: 10; }
+    nav .logo { font-size: 1.25rem; font-weight: 600; color: #fff; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav a { color: #fff; font-weight: 400; text-decoration: none; transition: opacity .2s; }
+    nav a:hover { opacity: .6; }
+    main { position: relative; z-index: 5; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 2rem; color: #fff; }
+    h1 { font-size: 3.5rem; font-weight: 300; margin-bottom: 1rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    p.lead { font-size: 1.125rem; font-weight: 300; max-width: 600px; margin-bottom: 2rem; text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+    .btn { padding: 0.75rem 2rem; background: rgba(255,255,255,0.8); color: #111; border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .btn:hover { background: #fff; }
+    section.features { padding: 4rem 2rem; background: #f9f9f9; z-index: 5; position: relative; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+    .feature { background: #fff; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .feature h3 { font-weight: 600; margin-bottom: .5rem; }
+    .feature p { font-weight: 300; color: #555; }
+    footer { padding: 2rem; text-align: center; font-size: .875rem; color: #888; z-index: 5; position: relative; }
+    /* Background graph */
+    #bg-graph { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+    #bg-graph svg { width: 100%; height: 100%; }
   </style>
 </head>
 <body>
+  <div class="parallax">
+    <div class="layer bg1"></div>
+  </div>
+  <div id="bg-graph"></div>
   <nav>
     <div class="logo">Malware Mixers</div>
     <ul>
       <li><a href="#about">About</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#graph">Network</a></li>
+      <li><a href="#features">Capabilities</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
-  <section class="hero" id="about">
-    <h1>Next-Gen Cybersecurity, Redefined</h1>
-    <p>At Malware Mixers, we blend advanced threat intelligence with bespoke design to secure your digital world.</p>
-    <button class="btn" onclick="window.location='#contact'">Get Started</button>
-  </section>
-  <section class="section" id="features">
-    <h2 style="text-align:center; margin-bottom:2rem;">Core Capabilities</h2>
+  <main id="about">
+    <h1>Ultimate Cybersecurity, Redefined</h1>
+    <p class="lead">Advanced threat intelligence and ironclad protection for your most critical assets.</p>
+    <button class="btn" onclick="document.getElementById('features').scrollIntoView({ behavior: 'smooth' })">Explore Capabilities</button>
+  </main>
+  <section class="features" id="features">
     <div class="features">
       <div class="feature">
-        <h3>Adaptive Threat Modeling</h3>
-        <p>Real-time behavioral analysis powered by AI-driven insights.</p>
+        <h3>Proactive Threat Intelligence</h3>
+        <p>Real-time monitoring and predictive analytics keep you ahead of emerging threats.</p>
       </div>
       <div class="feature">
-        <h3>Encrypted Data Vault</h3>
-        <p>Military-grade encryption with seamless access controls.</p>
+        <h3>Secure Data Vaults</h3>
+        <p>Hardware-backed encryption ensures your data remains uncompromised.</p>
       </div>
       <div class="feature">
-        <h3>Design-Conscious Dashboards</h3>
-        <p>Intuitive UI/UX crafted for executive insights.</p>
+        <h3>Intuitive Analytics</h3>
+        <p>Clear, actionable insights delivered through a streamlined interface.</p>
       </div>
       <div class="feature">
-        <h3>24/7 Elite Support</h3>
-        <p>Proactive monitoring by our world-class security team.</p>
+        <h3>Rapid Response Team</h3>
+        <p>Elite security operators on-call 24/7 to neutralize threats instantly.</p>
       </div>
     </div>
   </section>
-  <section class="section" id="graph">
-    <h2 style="text-align:center; margin-bottom:2rem;">Interactive Threat Network</h2>
-    <div id="graphContainer"></div>
-  </section>
-  <section class="section" id="contact">
-    <h2 style="text-align:center; margin-bottom:1rem;">Connect with Us</h2>
-    <p style="text-align:center;">CEO Elijah Shapiro &mdash; <a class="cta-link" href="mailto:elijah@malwaremixers.com">elijah@malwaremixers.com</a></p>
-  </section>
-  <footer class="footer">
-    &copy; 2025 Malware Mixers. All rights reserved.
+  <footer id="contact">
+    <p>CEO Elijah Shapiro &mdash; <a href="mailto:elijah@malwaremixers.com">elijah@malwaremixers.com</a></p>
+    <p>&copy; 2025 Malware Mixers</p>
   </footer>
 
-  <!-- D3 Force Graph -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
-    const width = document.getElementById('graphContainer').clientWidth;
-    const height = document.getElementById('graphContainer').clientHeight;
-    const svg = d3.select('#graphContainer')
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    (function() {
+      const svg = d3.select('#bg-graph').append('svg');
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      svg.attr('viewBox', `0 0 ${width} ${height}`);
 
-    // Sample nodes & links
-    const nodes = Array.from({ length: 30 }, (_, i) => ({ id: i }));
-    const links = d3.range(40).map(() => ({
-      source: Math.floor(Math.random() * nodes.length),
-      target: Math.floor(Math.random() * nodes.length)
-    }));
+      const nodes = d3.range(50).map(i => ({ id: i }));
+      const links = d3.range(60).map(() => ({ source: Math.floor(Math.random()*50), target: Math.floor(Math.random()*50) }));
 
-    const simulation = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id(d => d.id).distance(50))
-      .force('charge', d3.forceManyBody().strength(-100))
-      .force('center', d3.forceCenter(width / 2, height / 2));
+      const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100).strength(0.01))
+        .force('charge', d3.forceManyBody().strength(-5))
+        .force('center', d3.forceCenter(width/2, height/2))
+        .alpha(0.5)
+        .alphaDecay(0.005)
+        .velocityDecay(0.2)
+        .on('tick', ticked);
 
-    const link = svg.append('g')
-      .attr('stroke', '#444')
-      .selectAll('line')
-      .data(links)
-      .enter().append('line')
-      .attr('stroke-width', 1);
+      const link = svg.append('g')
+        .attr('stroke', '#fff')
+        .attr('stroke-opacity', 0.15)
+        .selectAll('line')
+        .data(links)
+        .enter().append('line');
 
-    const node = svg.append('g')
-      .selectAll('circle')
-      .data(nodes)
-      .enter().append('circle')
-      .attr('r', 5)
-      .attr('fill', 'var(--accent)')
-      .call(drag(simulation));
+      const node = svg.append('g')
+        .selectAll('circle')
+        .data(nodes)
+        .enter().append('circle')
+        .attr('r', 2)
+        .attr('fill', '#fff');
 
-    node.append('title').text(d => `Node ${d.id}`);
-
-    simulation.on('tick', () => {
-      link
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-
-      node
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-    });
-
-    function drag(simulation) {
-      function dragstarted(event, d) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+      function ticked() {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+        node
+          .attr('cx', d => d.x)
+          .attr('cy', d => d.y);
       }
-      function dragged(event, d) {
-        d.fx = event.x;
-        d.fy = event.y;
-      }
-      function dragended(event, d) {
-        if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-      return d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended);
-    }
+
+      // Mouse follow effect
+      window.addEventListener('mousemove', (e) => {
+        const [mx, my] = [e.clientX, e.clientY];
+        simulation.force('x', d3.forceX(mx).strength(0.02));
+        simulation.force('y', d3.forceY(my).strength(0.02));
+        simulation.alphaTarget(0.3).restart();
+      });
+
+      window.addEventListener('resize', () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        svg.attr('viewBox', `0 0 ${width} ${height}`);
+        simulation.force('center', d3.forceCenter(width/2, height/2));
+      });
+
+      // Parallax mousemove
+      document.addEventListener('mousemove', (e) => {
+        const dx = (e.clientX - width/2) * 0.02;
+        const dy = (e.clientY - height/2) * 0.02;
+        document.querySelector('.bg1').style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+    })();
   </script>
 </body>
 </html>

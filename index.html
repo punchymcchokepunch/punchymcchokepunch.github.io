@@ -1,1 +1,155 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malware Mixers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f1a;
+      --fg: #e0e0e0;
+      --accent: #3afddf;
+      --accent-2: #ff25d9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
+    nav .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav a { color: var(--fg); text-decoration: none; font-weight: 600; }
+    .hero { text-align: center; padding: 6rem 2rem; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+    .hero p { font-size: 1.25rem; margin-bottom: 2rem; color: #bbb; }
+    .btn { padding: 0.75rem 1.5rem; background: var(--accent); color: var(--bg); font-weight: 600; border: none; border-radius: 4px; cursor: pointer; }
+    .section { padding: 4rem 2rem; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+    .feature { background: #1a1a2e; border-radius: 8px; padding: 2rem; }
+    .feature h3 { margin-bottom: 0.5rem; color: var(--accent-2); }
+    #graphContainer { position: relative; width: 100%; height: 400px; }
+    .footer { text-align: center; padding: 2rem; border-top: 1px solid #222; }
+    a.cta-link { color: var(--accent); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Malware Mixers</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#graph">Network</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <section class="hero" id="about">
+    <h1>Next-Gen Cybersecurity, Redefined</h1>
+    <p>At Malware Mixers, we blend advanced threat intelligence with bespoke design to secure your digital world.</p>
+    <button class="btn" onclick="window.location='#contact'">Get Started</button>
+  </section>
+  <section class="section" id="features">
+    <h2 style="text-align:center; margin-bottom:2rem;">Core Capabilities</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>Adaptive Threat Modeling</h3>
+        <p>Real-time behavioral analysis powered by AI-driven insights.</p>
+      </div>
+      <div class="feature">
+        <h3>Encrypted Data Vault</h3>
+        <p>Military-grade encryption with seamless access controls.</p>
+      </div>
+      <div class="feature">
+        <h3>Design-Conscious Dashboards</h3>
+        <p>Intuitive UI/UX crafted for executive insights.</p>
+      </div>
+      <div class="feature">
+        <h3>24/7 Elite Support</h3>
+        <p>Proactive monitoring by our world-class security team.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="graph">
+    <h2 style="text-align:center; margin-bottom:2rem;">Interactive Threat Network</h2>
+    <div id="graphContainer"></div>
+  </section>
+  <section class="section" id="contact">
+    <h2 style="text-align:center; margin-bottom:1rem;">Connect with Us</h2>
+    <p style="text-align:center;">CEO Elijah Shapiro &mdash; <a class="cta-link" href="mailto:elijah@malwaremixers.com">elijah@malwaremixers.com</a></p>
+  </section>
+  <footer class="footer">
+    &copy; 2025 Malware Mixers. All rights reserved.
+  </footer>
+
+  <!-- D3 Force Graph -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const width = document.getElementById('graphContainer').clientWidth;
+    const height = document.getElementById('graphContainer').clientHeight;
+    const svg = d3.select('#graphContainer')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    // Sample nodes & links
+    const nodes = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+    const links = d3.range(40).map(() => ({
+      source: Math.floor(Math.random() * nodes.length),
+      target: Math.floor(Math.random() * nodes.length)
+    }));
+
+    const simulation = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(links).id(d => d.id).distance(50))
+      .force('charge', d3.forceManyBody().strength(-100))
+      .force('center', d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append('g')
+      .attr('stroke', '#444')
+      .selectAll('line')
+      .data(links)
+      .enter().append('line')
+      .attr('stroke-width', 1);
+
+    const node = svg.append('g')
+      .selectAll('circle')
+      .data(nodes)
+      .enter().append('circle')
+      .attr('r', 5)
+      .attr('fill', 'var(--accent)')
+      .call(drag(simulation));
+
+    node.append('title').text(d => `Node ${d.id}`);
+
+    simulation.on('tick', () => {
+      link
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+
+      node
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y);
+    });
+
+    function drag(simulation) {
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+      return d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended);
+    }
+  </script>
+</body>
+</html>
